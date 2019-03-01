@@ -1,0 +1,7 @@
+CREATE TABLE dustbin(
+  id INT(11) PRIMARY KEY AUTO_INCREMENT,
+  dustbin_id INT(11),
+  date VARCHAR(10),
+  latitude double,
+  longitude double,
+fill_amount double);
