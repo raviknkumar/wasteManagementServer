@@ -1,0 +1,13 @@
+#spring.datasource.url: "jdbc:mysql://localhost:3306/waste_management"
+#spring.datasource.username: root
+#spring.datasource.password: ravi2108
+
+persistence:
+  user: root
+  password: ravi2108
+  databaseName: waste_management
+  serverName: 127.0.0.1
+  portNumber: 3306
+  maximumPoolSize: 10
+  connectionTimeout: 50000
+  jdbcUrl: "jdbc:mysql://127.0.0.1:3306/waste_management"
