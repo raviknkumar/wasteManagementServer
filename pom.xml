@@ -68,6 +68,19 @@
             <artifactId>archaius-core</artifactId>
             <version>0.1.4</version>
         </dependency>
+        <dependency>
+            <groupId>com.java.cvrpSolver</groupId>
+            <artifactId>jvrp</artifactId>
+            <version>0.0.1</version>
+            <scope>system</scope>
+            <systemPath>F:/Studies/jvrp/jvrp/target/jvrp-0.0.1.jar</systemPath>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/org.apache.commons/commons-io -->
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-io</artifactId>
+            <version>1.3.2</version>
+        </dependency>
 
     </dependencies>
 

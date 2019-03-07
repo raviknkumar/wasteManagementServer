@@ -4,9 +4,10 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Builder
 @Data
@@ -23,10 +24,12 @@ public class Vehicle {
     @Column(name = "vehicle_id")
     private Integer vehicleId;
 
-    @Column(name = "vehicle_number")
-    private String vehicleNumber;
+    @ElementCollection
+    @CollectionTable(name="dustbin", joinColumns= {@JoinColumn(name="dustbin_id")})
+    @Column(name="path_followed", nullable=false)
+    private List<Integer> pathFollowed;
 
-    @Column(name = "vehicle_capacity")
-    private Double vehicleCapacity;
+    @Column(name = "total_distance_travelled")
+    private double totalDistanceTravelled;
 
 }

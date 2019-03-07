@@ -125,7 +125,7 @@ public class CorePersistenceConfig {
           = new LocalContainerEntityManagerFactoryBean();
         em.setDataSource(ds1DataSource());
         em.setPackagesToScan(
-                "com.example.waste_management_server");
+                "com.example.waste_management_server.entity");
         HibernateJpaVendorAdapter vendorAdapter
           = new HibernateJpaVendorAdapter();
         em.setJpaVendorAdapter(vendorAdapter);

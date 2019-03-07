@@ -5,3 +5,12 @@ CREATE TABLE dustbin(
   latitude double,
   longitude double,
 fill_amount double);
+
+CREATE TABLE user(
+	id INT(11) PRIMARY KEY AUTO_INCREMENT,
+	email VARCHAR(100),
+	password VARCHAR(100),
+	confirm_password VARCHAR(100),
+	first_name VARCHAR(100),
+	last_name VARCHAR(100)
+);
