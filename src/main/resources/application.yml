@@ -13,3 +13,19 @@ persistence:
 
 inputFileBasePath: "F:\\Studies\\waste_management_server\\inputFile"
 
+
+#spring.jpa.properties.hibernate.dialect : org.hibernate.dialect.MySQL5InnoDBDialect
+#spring.jpa.hibernate.ddl-auto : update
+#logging.level.org.hibernate.SQL : DEBUG
+#logging.level.org.hibernate.type : TRACE
+  # Hibernate
+
+  # The SQL dialect makes Hibernate generate better SQL for the chosen database
+
+
+  # Hibernate ddl auto (create, create-drop, validate, update)
+spring:
+  jpa:
+    generate-ddl: true
+    hibernate.ddl-auto: create
+

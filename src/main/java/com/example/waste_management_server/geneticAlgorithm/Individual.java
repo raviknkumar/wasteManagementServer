@@ -1,45 +1,92 @@
 package com.example.waste_management_server.geneticAlgorithm;
 
 import com.example.waste_management_server.entity.Dustbin;
+import com.java.cvrpSolver.vrp.utils.collections.Pair;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Random;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Component;
 
+import java.util.*;
+import java.util.stream.Collectors;
+
+@Builder
 @Data
+@Slf4j
+@AllArgsConstructor
+//@Component
 public class Individual {
 
     private int numberOfVehicles;
-    //fitness ->getFitness()
-    //distance ->getFitness()
     private int []path;
-    private ArrayList<Integer[]> initialPath;
-    private List<Dustbin> dustbins;
+    private ArrayList<Integer[]> routesGenerated;
+    public static List<Dustbin> dustbins = new ArrayList<>();
+    private Map<Integer,List<Integer>> vehicleVsRoutesGeneratedMap;
+    private double totalDistanceTravelled;
 
     public double tourProbability ;
     Random random = new Random();
 
+    //dummy noArgsConstructor
     public Individual()
     {
-        initialPath = new ArrayList<>();
-        path = new int[initialPath.size()];
-        dustbins = new ArrayList<>();
+        routesGenerated = null;
+        path = new int[1];
     }
 
-    public Individual(int numberOfVehicles, List<Dustbin> dustbins, ArrayList<Integer[]> initialPath)
+    //testedAllArgsConstructor
+    public Individual(int numberOfVehicles, ArrayList<Integer[]> routesGenerated)
     {
         this.numberOfVehicles = numberOfVehicles;
-        this.initialPath = initialPath;
-        this.dustbins = dustbins;
-        path = new int[initialPath.size()];
+        this.routesGenerated = routesGenerated;
+        path = new int[routesGenerated.size()];
+        //initialize the path
+        if(Math.random()<0.2)
+            initializeIndividual();
+        else
+            initializeIndividualRandomly();
+        //to generate a map of vehicles vs routesGenerated it visits
+        initializeMap();
     }
 
-    // Creates a random individual
+    // Creates a individual in roundRobinManner
+    public void initializeIndividual()
+    {
+        for(int i=0;i<path.length;i++)
+            path[i] = i%numberOfVehicles;
+    }
+
     public void initializeIndividualRandomly()
     {
         for(int i=0;i<path.length;i++)
             path[i] = random.nextInt(numberOfVehicles);
+    }
+
+
+
+    /**
+     * input: [4, 3, 4, 0, 0, 4, 4]
+     * output:{ 0->[3,4], 1->[], 2->[], 3->[1], 4->[0,2,5,6]}
+     * path[index] -> VehicleNumber
+     * index is routeNumber
+     */
+    private void initializeMap()
+    {
+        vehicleVsRoutesGeneratedMap = new HashMap<>();
+        for(int i=0;i<numberOfVehicles;i++)
+            vehicleVsRoutesGeneratedMap.put(i,new ArrayList<>());
+
+
+        for (int j = 0; j < path.length; j++) {
+            vehicleVsRoutesGeneratedMap.get(path[j]).add(j);
+        }
+
+    }
+
+    public void setPath(int[] path) {
+        this.path = path;
+        initializeMap();
     }
 
     public void setTourProbability(double total, double fitness)
@@ -52,9 +99,25 @@ public class Individual {
         return path[i];
     }
 
-    public void setVehicleAtPath(int i, int j)
+    /**
+     * @param vehicle
+     * @param pathIndex
+     */
+    public void setVehicleAtPath(int vehicle, int pathIndex)
     {
-        path[i]=j;
+        try {
+            //remove route assigned to previous vehicle
+            int previousVehicle = path[pathIndex];
+            vehicleVsRoutesGeneratedMap.get(previousVehicle).remove(new Integer(pathIndex));
+            //assign route to new Vehicle
+            path[pathIndex] = vehicle;
+            vehicleVsRoutesGeneratedMap.get(vehicle).add(pathIndex);
+        }
+        catch (Exception e)
+        {
+            System.out.println(e.getMessage()+Arrays.toString(path)+"\n"+vehicleVsRoutesGeneratedMap
+                    +"\nVehicle:"+vehicle+" pathIndex: "+pathIndex);
+        }
     }
 
     private static double getDistance(Dustbin dustbin1, Dustbin dustbin2)
@@ -73,37 +136,51 @@ public class Individual {
 
     public double getFitness()
     {
-        double totalCost=0;
+        double[] distanceOfEachVehicle = new double[numberOfVehicles];
+        totalDistanceTravelled = getTotalDistanceTravelled();
+        double mean = totalDistanceTravelled/numberOfVehicles;
+
+        //mean deviation
+        double fitness = 0;
         for(int i=0;i<numberOfVehicles;i++)
-            for (int j = 0; j < this.path.length; j++)
-              if(i==path[j])
-                  totalCost+= getPathFitness(initialPath.get(j));
-        return totalCost;
+            fitness+=Math.abs(mean-distanceOfEachVehicle[i]);
+
+        return fitness;
     }
 
-    public double getPathFitness(int path)
+
+    /**
+     * gives the distance to travel in the route given index of route in routesGenerated
+     * @param routeIndex
+     * @return
+     */
+    public double getRouteDistance(int routeIndex)
     {
-        Integer[] truckPath = initialPath.get(path);
+        Integer[] vehiclePath = routesGenerated.get(routeIndex);
+        return getRouteDistance(vehiclePath);
+    }
+
+    public double getRouteDistance(Integer[] vehiclePath)
+    {
         double totalDistanceTravelled = 0;
         int from=-1,to=-1;
-        for(int i=0;i<truckPath.length-1;i++) {
-            from = truckPath[i];
-            to=truckPath[i+1];
+        for(int i=0;i<vehiclePath.length-1;i++) {
+            from = vehiclePath[i];
+            to=vehiclePath[i+1];
             totalDistanceTravelled += getDistance(dustbins.get(from),dustbins.get(to));
         }
         return totalDistanceTravelled;
     }
 
-    public double getPathFitness(Integer[] truckPath)
+    public double distanceTravelledByVehicle(int vehicleNum)
     {
-        double totalDistanceTravelled = 0;
-        int from=-1,to=-1;
-        for(int i=0;i<truckPath.length-1;i++) {
-            from = truckPath[i];
-            to=truckPath[i+1];
-            totalDistanceTravelled += getDistance(dustbins.get(from),dustbins.get(to));
-        }
-        return totalDistanceTravelled;
+        double distanceTravelled = 0;
+        List<Integer> routesCarried = vehicleVsRoutesGeneratedMap.get(vehicleNum);
+        if(routesCarried!=null)
+            for(Integer routeCarried: routesCarried)
+                distanceTravelled+= getRouteDistance(routeCarried);
+
+        return distanceTravelled;
     }
 
     public int getSize()
@@ -111,9 +188,63 @@ public class Individual {
         return path.length;
     }
 
+    public Pair<Integer,Integer> findMinMaxTrucks()
+    {
+        int minFrequentTruck = 0, maxFrequentTruck = 0;
+
+        for(Integer i:vehicleVsRoutesGeneratedMap.keySet())
+        {
+            if(vehicleVsRoutesGeneratedMap.get(i).size() == vehicleVsRoutesGeneratedMap.get(maxFrequentTruck).size())
+            {
+                if(distanceTravelledByVehicle(i)>distanceTravelledByVehicle(maxFrequentTruck))
+                    maxFrequentTruck=i;
+            }
+
+            if(vehicleVsRoutesGeneratedMap.get(i).size() > vehicleVsRoutesGeneratedMap.get(maxFrequentTruck).size())
+                maxFrequentTruck=i;
+            if(vehicleVsRoutesGeneratedMap.get(i).size() == vehicleVsRoutesGeneratedMap.get(minFrequentTruck).size())
+            {
+                if(distanceTravelledByVehicle(i) < distanceTravelledByVehicle(minFrequentTruck))
+                    minFrequentTruck=i;
+            }
+            if(vehicleVsRoutesGeneratedMap.get(i).size() < vehicleVsRoutesGeneratedMap.get(minFrequentTruck).size())
+                minFrequentTruck=i;
+        }
+        return new Pair<>(minFrequentTruck,maxFrequentTruck);
+    }
+
+
+    public int getLongestRouteForVehicle(int vehicle)
+    {
+        List<Double> distanceOfEachRoute=new ArrayList<>();
+        try {
+            distanceOfEachRoute = vehicleVsRoutesGeneratedMap.get(vehicle).stream().map(routeNumber -> getRouteDistance(routeNumber)).collect(Collectors.toList());
+            return distanceOfEachRoute.indexOf(Collections.max(distanceOfEachRoute));
+        }
+        catch (Exception e)
+        {
+            System.out.println("vehicle:"+vehicle+" Path:"+path+" distanceOfEachRoute: "+distanceOfEachRoute+"Max: "+Collections.max(distanceOfEachRoute));
+        }
+        return 0;
+    }
+
+    public double getTotalDistanceTravelled()
+    {
+        double totalDistance = 0;
+        for(Integer vehicle:vehicleVsRoutesGeneratedMap.keySet())
+            totalDistance+= distanceTravelledByVehicle(vehicle);
+
+        return totalDistance;
+    }
+
     @Override
     public String toString()
     {
-        return Arrays.toString(path);
+        String s=Arrays.toString(path)+"\n";
+        for(int i=0;i<numberOfVehicles;i++)
+            s+="Vehicle "+i+" "+distanceTravelledByVehicle(i)+"\t";
+        s+="\n Total: "+totalDistanceTravelled+"\n";
+        return s;
     }
+
 }

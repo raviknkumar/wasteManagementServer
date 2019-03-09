@@ -1,3 +1,4 @@
+/*
 package com.example.waste_management_server.genetic;
 
 import com.example.waste_management_server.entity.Dustbin;
@@ -47,7 +48,7 @@ public class Individual1 {
     }
 
     // Creates a random individual
-    public void initializeIndividualRandomly()
+    public void initializeIndividual()
     {
         for(int i=0;i<path.length;i++)
             path[i] = random.nextInt(numberOfVehicles);
@@ -145,30 +146,32 @@ public class Individual1 {
     }
     
 
-    /*private double getPathFitness(int path)
+    */
+/*private double getRouteDistance(int path)
     {
-        Integer[] truckPath = initialPath.get(path);
-        double totalDistanceTravelled = 0;
+        Integer[] truckPath = routesGenerated.get(path);
+        double getTotalDistanceTravelled = 0;
         int from=-1,to=-1;
         for(int i=0;i<truckPath.length-1;i++) {
             from = truckPath[i];
             to=truckPath[i+1];
-            totalDistanceTravelled += getDistance(dustbins.get(from),dustbins.get(to));
+            getTotalDistanceTravelled += getDistance(dustbins.get(from),dustbins.get(to));
         }
-        return totalDistanceTravelled;
+        return getTotalDistanceTravelled;
     }
 
-    private double getPathFitness(Integer[] truckPath)
+    private double getRouteDistance(Integer[] truckPath)
     {
-        double totalDistanceTravelled = 0;
+        double getTotalDistanceTravelled = 0;
         int from=-1,to=-1;
         for(int i=0;i<truckPath.length-1;i++) {
             from = truckPath[i];
             to=truckPath[i+1];
-            totalDistanceTravelled += getDistance(dustbins.get(from),dustbins.get(to));
+            getTotalDistanceTravelled += getDistance(dustbins.get(from),dustbins.get(to));
         }
-        return totalDistanceTravelled;
-    }*/
+        return getTotalDistanceTravelled;
+    }*//*
+
 
     public int getSize()
     {
@@ -181,3 +184,4 @@ public class Individual1 {
         return Arrays.toString(path);
     }
 }
+*/

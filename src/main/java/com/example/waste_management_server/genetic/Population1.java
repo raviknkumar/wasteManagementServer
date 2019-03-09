@@ -1,3 +1,4 @@
+/*
 package com.example.waste_management_server.genetic;
 
 import com.example.waste_management_server.entity.Dustbin;
@@ -19,7 +20,7 @@ public class Population1 {
         for (int i = 0; i < populationSize; i++)
         {
             Individual1 individual1 = new Individual1(numberOfVehicles,dustbins);
-            individual1.initializeIndividualRandomly();
+            individual1.initializeIndividual();
             population.add(individual1);
         }
     }
@@ -65,3 +66,4 @@ public class Population1 {
 
 
 }
+*/

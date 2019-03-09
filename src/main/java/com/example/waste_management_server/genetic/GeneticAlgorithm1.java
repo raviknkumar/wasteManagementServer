@@ -1,3 +1,4 @@
+/*
 package com.example.waste_management_server.genetic;
 
 import com.example.waste_management_server.entity.Dustbin;
@@ -7,7 +8,9 @@ import java.util.List;
 
 public class GeneticAlgorithm1
 {
-    /* GeneticAlgorithm1 parameters */
+    */
+/* GeneticAlgorithm1 parameters *//*
+
     private static final double mutationRate = 0.005;
     private int numberOfVehicles;
     private List<Dustbin> dustbins;
@@ -115,14 +118,8 @@ public class GeneticAlgorithm1
     private void mutate(Individual1 individual1)
     {
         if(Math.random() < mutationRate) {
-            int i = (int) (Math.random() * individual1.getSize());
-            int j = (int) (Math.random() * individual1.getSize());
 
-            int v1 = individual1.getVehicleAtPath(i);
-            int v2 = individual1.getVehicleAtPath(j);
 
-            individual1.setVehicleAtPath(i, v2);
-            individual1.setVehicleAtPath(j, v1);
         }
     }
 
@@ -158,4 +155,4 @@ public class GeneticAlgorithm1
 
         return t;
     }
-}
+}*/

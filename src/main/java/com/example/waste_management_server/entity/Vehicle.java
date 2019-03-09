@@ -6,8 +6,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
 
 @Builder
 @Data
@@ -24,12 +22,13 @@ public class Vehicle {
     @Column(name = "vehicle_id")
     private Integer vehicleId;
 
-    @ElementCollection
-    @CollectionTable(name="dustbin", joinColumns= {@JoinColumn(name="dustbin_id")})
-    @Column(name="path_followed", nullable=false)
-    private List<Integer> pathFollowed;
+    @Column(name="path_followed")
+    private String pathFollowed;
 
     @Column(name = "total_distance_travelled")
     private double totalDistanceTravelled;
 
+    @Column(name = "date")
+    private String date;
 }
+

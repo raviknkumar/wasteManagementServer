@@ -1,6 +1,7 @@
 package com.example.waste_management_server;
 
-import com.netflix.config.DynamicPropertyFactory;
+import com.netflix.config.*;
+import com.netflix.config.jmx.ConfigJMXManager;
 import com.zaxxer.hikari.HikariDataSource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -18,7 +19,7 @@ import java.util.HashMap;
 
 @Configuration
 @EnableJpaRepositories(
-    basePackages = "com.example.waste_management_server",
+    basePackages = "com.example.waste_management_server.repository",
     entityManagerFactoryRef = "coreEntityManager",
     transactionManagerRef = "coreTransactionManager"
 )
@@ -37,6 +38,16 @@ public class CorePersistenceConfig {
 
     private static final String SHOW_SQL = "hibernate.show_sql";
     private static final String FORMAT_SQL = "hibernate.format_sql";
+
+    AbstractPollingScheduler scheduler = new FixedDelayPollingScheduler();
+
+    // Configuration source that brings dynamic changes to the configuration
+    // via polling
+    PolledConfigurationSource source = new XMLPolledConfigurationSource();
+
+    // Configuration that polls a PolledConfigurationSource according to the
+    // schedule set by a scheduler
+    DynamicConfiguration configuration = new DynamicConfiguration(source, scheduler);
 
     private int getMaxPoolSize() {
         if(this.maxPoolSize == null)
@@ -106,7 +117,7 @@ public class CorePersistenceConfig {
     @Bean
     public javax.sql.DataSource ds1DataSource() {
         HikariDataSource ds = new HikariDataSource();
-        ds.setDriverClassName("com.mysql.jdbc.Driver");
+        ds.setDriverClassName("com.mysql.cj.jdbc.Driver");
         ds.addDataSourceProperty("databaseName", getDatabaseName());
         ds.addDataSourceProperty("serverName", getServername());
         ds.addDataSourceProperty("portNumber", getPortNumber());
