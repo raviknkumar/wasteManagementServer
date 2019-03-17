@@ -1,7 +1,7 @@
 package com.example.waste_management_server.converter;
 
 import com.example.waste_management_server.entity.Vehicle;
-import com.example.waste_management_server.entity.VehicleDto;
+import com.example.waste_management_server.model.VehicleDto;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;

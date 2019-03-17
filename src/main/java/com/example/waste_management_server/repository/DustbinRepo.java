@@ -7,5 +7,5 @@ import java.util.List;
 
 public interface DustbinRepo extends JpaRepository<Dustbin,Integer> {
     List<Dustbin> findByDate(String date);
-    List<Dustbin> findByDateAndFillAmountGreaterThan(String date, double fillAmount);
+    List<Dustbin> findByDateAndFillAmountGreaterThanEqual(String date, double fillAmount);
 }

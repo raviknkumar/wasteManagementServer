@@ -112,10 +112,11 @@ public class GeneticAlgorithm
         System.out.println("Min In P1:"+minMaxForParent1.getFirst());
         System.out.println("Max In P2:"+minMaxForParent2.getSecond());
 
-        if(!minMaxForParent1.getSecond().equals(minMaxForParent2.getFirst()))
+        //p1 max replace by p2 min
+        if(minMaxForParent1.getSecond()!=(minMaxForParent2.getFirst()))
             path[parent1.getLongestRouteForVehicle(minMaxForParent1.getSecond())]=minMaxForParent2.getFirst();
-        else if(!minMaxForParent2.getSecond().equals(minMaxForParent1.getFirst()))
-            path[parent2.getLongestRouteForVehicle(minMaxForParent1.getSecond())]=minMaxForParent1.getFirst();
+        else if(minMaxForParent2.getSecond()!=(minMaxForParent1.getFirst()))
+            path[parent2.getLongestRouteForVehicle(minMaxForParent2.getSecond())]=minMaxForParent1.getFirst();
 
         //As of now
         for(int i=0;i<path.length;i++)

@@ -1,4 +1,4 @@
-package com.example.waste_management_server.entity;
+package com.example.waste_management_server.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

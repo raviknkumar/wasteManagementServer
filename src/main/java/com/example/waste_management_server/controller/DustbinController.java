@@ -3,7 +3,9 @@ package com.example.waste_management_server.controller;
 import com.example.waste_management_server.converter.VehicleConverter;
 import com.example.waste_management_server.entity.Depot;
 import com.example.waste_management_server.entity.Dustbin;
-import com.example.waste_management_server.entity.VehicleDto;
+import com.example.waste_management_server.entity.Vehicle;
+import com.example.waste_management_server.model.StatisticsInfoDto;
+import com.example.waste_management_server.model.VehicleDto;
 import com.example.waste_management_server.geneticAlgorithm.GeneticAlgorithm;
 import com.example.waste_management_server.geneticAlgorithm.Individual;
 import com.example.waste_management_server.geneticAlgorithm.Population;
@@ -18,13 +20,12 @@ import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.*;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Slf4j
 @RestController
-@CrossOrigin(maxAge = 3600)
+@CrossOrigin(origins = "*", allowedHeaders = "*")
 @RequestMapping("/dustbin")
 public class DustbinController {
 
@@ -58,27 +59,29 @@ public class DustbinController {
     }
 
     @GetMapping("/generateInputFile")
-    public String generateInputFile(@RequestParam String date,@RequestParam Integer vehicleCapacity) throws FileNotFoundException {
-        generateInputFile.generate(date,vehicleCapacity);
+    public String generateInputFile(@RequestParam String date,@RequestParam Integer vehicleCapacity/*,@RequestParam Double wasteLimit*/) throws FileNotFoundException {
+        generateInputFile.generate(date,vehicleCapacity/*,wasteLimit*/);
         return "Success";
     }
 
+    @CrossOrigin(origins = "*", allowedHeaders = "*")
     @GetMapping("/solve")
-    public List<VehicleDto>  solveCvrpProblem(/*String date*/) throws IOException {
+    public String  solveCvrpProblem(@RequestParam String date, @RequestParam Integer numberOfVehicles,@RequestParam Integer vehicleCapacity) throws IOException {
 
-        String date = "2019-03-06";
-        int numberOfVehicles = 5;
+        generateInputFile.generate(date,vehicleCapacity);
         int populationSize =10;
         int numberOfRounds = 10;
         ArrayList<Integer[]> routesGenerated = solver.solve();
-        double fillAmount = 7;
+//        double fillAmount = 7;
 
-        List<Dustbin> dustbins = dustbinRepo.findByDateAndFillAmountGreaterThan(date,fillAmount);
+        List<Dustbin> dustbins = dustbinRepo.findByDate(date);
         //add depot as 0th bin to dustbin List
         dustbins.add(0,depot);
 
 
         GeneticAlgorithm geneticAlgorithm = new GeneticAlgorithm(numberOfVehicles,dustbins,routesGenerated,numberOfRounds);
+        Map<Integer,Integer> indexVsDustbinId = new HashMap<>();
+
         Population population = new Population(populationSize,numberOfVehicles,dustbins,routesGenerated);
 
         ArrayList<Individual> fittestInAllGenarations = new ArrayList<>();
@@ -135,36 +138,62 @@ public class DustbinController {
             v.setTotalDistanceTravelled(bestIndividual.getRouteDistance(v.getPathFollowed().toArray(new Integer[v.getPathFollowed().size()])));
         }
 
-        vehicleConverter.convertModelToEntity(vehicleDtos).forEach(v->vehicleRepo.save(v));
-        return vehicleDtos;
+//        vehicleConverter.convertModelToEntity(vehicleDtos).forEach(v->vehicleRepo.save(v));
+        return "Generated Routes Succesfully";
     }
 
     @GetMapping("/testIndividual")
     public String testIndividual() throws IOException {
         String date = "2019-03-06";
         int numberOfVehicles = 5;
-        int populationSize =5;
-        int numberOfRounds = 3;
+        int populationSize =10;
+        int numberOfRounds = 10;
+        ArrayList<Integer[]> routesGenerated = solver.solve();
         double fillAmount = 7;
 
-        ArrayList<Integer[]> routesGenerated = solver.solve();
+        List<Dustbin> dustbins = dustbinRepo.findByDateAndFillAmountGreaterThanEqual(date,fillAmount);
+        //add depot as 0th bin to dustbin List
+        dustbins.add(0,depot);
 
 
-        List<Dustbin> byDate = dustbinRepo.findByDateAndFillAmountGreaterThan(date,fillAmount);
-                byDate.add(depot);
-        GeneticAlgorithm geneticAlgorithm = new GeneticAlgorithm(numberOfVehicles,byDate,routesGenerated,numberOfRounds);
-        Population population = new Population(populationSize,numberOfVehicles,byDate,routesGenerated);
-        log.info("Fittest in Initial Generation{} {}",population.getFittest(),population.getFittest().getTotalDistanceTravelled());
+        Individual.dustbins = dustbins;
+        Individual parent1 = new Individual(numberOfVehicles,routesGenerated);
+        parent1.setPath(new int[]{0, 1, 2});
+        Individual parent2 = new Individual(numberOfVehicles,routesGenerated);
+        parent2.setPath(new int[]{3, 0, 0});
 
-        for(int i=0;i<numberOfRounds;i++)
-        {
-            geneticAlgorithm.updateMutationRate(i);
-            population=geneticAlgorithm.evolvePopulation(population);
-            log.info("Fittest in Generation{} {} {}",i,population.getFittest(),population.getFittest().getTotalDistanceTravelled());
-        }
+        /*Max In P1:1
+        Min In P2:1
+        Min In P1:3
+        Max In P2:0*/
+
+        System.out.println(parent1.getLongestRouteForVehicle(1));
+        //System.out.println(parent2.getLongestRouteForVehicle(1));
+        //System.out.println(parent1.getLongestRouteForVehicle(3));
+        System.out.println(parent2.getLongestRouteForVehicle(0));
+
+        /*if(!minMaxForParent1.getSecond().equals(minMaxForParent2.getFirst()))
+            path[parent1.getLongestRouteForVehicle(minMaxForParent1.getSecond())]=minMaxForParent2.getFirst();
+        else if(!minMaxForParent2.getSecond().equals(minMaxForParent1.getFirst()))
+            path[parent2.getLongestRouteForVehicle(minMaxForParent1.getSecond())]=minMaxForParent1.getFirst();*/
 
         return "Success";
     }
 
-}
+    @GetMapping("/stats")
+    public StatisticsInfoDto getStatsData(@RequestParam String date){
+        StatisticsInfoDto statisticsInfoDto = StatisticsInfoDto.builder().build();
+        List<Dustbin> dustbins = dustbinRepo.findByDate(date);
+        statisticsInfoDto.setNumberOfDustbins(dustbins.size());
+        statisticsInfoDto.setDustbinIds(dustbins.stream().map(Dustbin::getDustbinId).collect(Collectors.toList()));
+        statisticsInfoDto.setFillAmounts(dustbins.stream().map(Dustbin::getFillAmount).collect(Collectors.toList()));
+        statisticsInfoDto.setTotalFillAmount(dustbins.stream().mapToDouble(Dustbin::getFillAmount).sum());
 
+        Collection<Vehicle> vehicles = vehicleRepo.findByDate(date);
+        double totalDistance= vehicles.stream().mapToDouble(Vehicle::getTotalDistanceTravelled).sum();
+        statisticsInfoDto.setTotalDistanceTravlled(totalDistance);
+
+        return  statisticsInfoDto;
+    }
+
+}

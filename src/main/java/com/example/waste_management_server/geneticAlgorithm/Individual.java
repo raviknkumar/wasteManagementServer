@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Builder
 @Data
@@ -217,15 +218,9 @@ public class Individual {
     public int getLongestRouteForVehicle(int vehicle)
     {
         List<Double> distanceOfEachRoute=new ArrayList<>();
-        try {
-            distanceOfEachRoute = vehicleVsRoutesGeneratedMap.get(vehicle).stream().map(routeNumber -> getRouteDistance(routeNumber)).collect(Collectors.toList());
-            return distanceOfEachRoute.indexOf(Collections.max(distanceOfEachRoute));
-        }
-        catch (Exception e)
-        {
-            System.out.println("vehicle:"+vehicle+" Path:"+path+" distanceOfEachRoute: "+distanceOfEachRoute+"Max: "+Collections.max(distanceOfEachRoute));
-        }
-        return 0;
+                distanceOfEachRoute = vehicleVsRoutesGeneratedMap.get(vehicle).stream().map(this::getRouteDistance).collect(Collectors.toList());
+                int largestRouteIndex = distanceOfEachRoute.indexOf(Collections.max(distanceOfEachRoute));
+                return vehicleVsRoutesGeneratedMap.get(vehicle).get(largestRouteIndex);
     }
 
     public double getTotalDistanceTravelled()

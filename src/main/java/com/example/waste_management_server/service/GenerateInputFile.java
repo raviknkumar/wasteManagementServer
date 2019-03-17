@@ -16,7 +16,8 @@ public class GenerateInputFile {
     @Autowired private Depot depot;
 
 
-    public void generate(String date, int vehicleCapacity) throws FileNotFoundException {
+    public void generate(String date, int vehicleCapacity/*, double twl*/) throws FileNotFoundException {
+//        List<Dustbin> dustbins = dustbinRepo.findByDateAndFillAmountGreaterThanEqual(date,twl);
         List<Dustbin> dustbins = dustbinRepo.findByDate(date);
         int numberOfDustbins = dustbins.size();
         int maximumRouteTime = 99999;
