@@ -194,4 +194,10 @@ public class DustbinController {
         return  statisticsInfoDto;
     }
 
+    @GetMapping("/testSolve")
+    public String testSolve()
+    {
+        return null;
+    }
+
 }
