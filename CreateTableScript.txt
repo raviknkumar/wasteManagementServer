@@ -6,7 +6,7 @@ CREATE TABLE dustbin(
   longitude double,
 fill_amount double);
 
-CREATE TABLE user(
+CREATE TABLE appUser(
 	id INT(11) PRIMARY KEY AUTO_INCREMENT,
 	email VARCHAR(100),
 	password VARCHAR(100),

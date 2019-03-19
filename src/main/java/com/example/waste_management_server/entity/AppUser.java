@@ -11,8 +11,8 @@ import javax.persistence.*;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Entity(name="user")
-public class User {
+@Entity(name="app_user")
+public class AppUser {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -35,6 +35,6 @@ public class User {
     private String confirmPassword;
 
     @Column(name = "deleted")
-    private boolean deleted;
+    private int deleted;
 
 }

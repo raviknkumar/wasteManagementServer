@@ -1,6 +1,6 @@
 package com.example.waste_management_server.service;
 
-import com.example.waste_management_server.entity.User;
+import com.example.waste_management_server.entity.AppUser;
 import com.example.waste_management_server.repository.UserRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -12,31 +12,31 @@ public class UserServiceImpl {
 
     public boolean verifyUser(String userEmail,String password)
     {
-        User user = userRepo.findByEmail(userEmail);
-        if(user.getPassword().equals(password))
+        AppUser appUser = userRepo.findByEmail(userEmail);
+        if(appUser.getPassword().equals(password))
             return true;
         return false;
     }
 
-    public String saveUser(User user)
+    public String saveUser(AppUser appUser)
     {
-        userRepo.save(user);
+        userRepo.save(appUser);
         return "Success";
     }
 
-    public boolean validateEmail(User user)
+    public boolean validateEmail(AppUser appUser)
     {
-        User user1 = userRepo.findByEmail(user.getEmail());
-        if(user1==null || user1.getEmail() == null)
+        AppUser appUser1 = userRepo.findByEmail(appUser.getEmail());
+        if(appUser1 ==null || appUser1.getEmail() == null)
             return true;
         return false;
     }
 
-    public boolean verifyPassword(User user)
+    public boolean verifyPassword(AppUser appUser)
     {
-        User originalUser = userRepo.findByEmail(user.getEmail());
-        if(originalUser==null)
+        AppUser originalAppUser = userRepo.findByEmail(appUser.getEmail());
+        if(originalAppUser ==null)
             return false;
-        return originalUser.getPassword().equals(user.getPassword());
+        return originalAppUser.getPassword().equals(appUser.getPassword());
     }
 }

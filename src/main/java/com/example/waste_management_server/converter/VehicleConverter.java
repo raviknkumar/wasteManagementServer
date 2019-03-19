@@ -22,6 +22,13 @@ public class VehicleConverter {
                 .build();
     }
 
+    public List<Vehicle> convertModelToEntity(List<VehicleDto> vehicleDtos)
+    {
+        List<Vehicle> vehicles = new ArrayList<>();
+        vehicleDtos.forEach(v->vehicles.add(convertModelToEntity(v)));
+        return vehicles;
+    }
+
     public VehicleDto convertEntityToModel(Vehicle vehicle)
     {
         VehicleDto vehicleDto = VehicleDto.builder()
@@ -35,13 +42,6 @@ public class VehicleConverter {
         pathTravelled = Arrays.stream(path.split(",")).map(d_Id -> Integer.parseInt(d_Id.trim())).collect(Collectors.toList());
         vehicleDto.setPathFollowed(pathTravelled);
         return vehicleDto;
-    }
-
-    public List<Vehicle> convertModelToEntity(List<VehicleDto> vehicleDtos)
-    {
-        List<Vehicle> vehicles = new ArrayList<>();
-        vehicleDtos.forEach(v->vehicles.add(convertModelToEntity(v)));
-        return vehicles;
     }
 
     public List<VehicleDto> convertEntityToModel(List<Vehicle> vehicles)

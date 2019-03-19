@@ -14,6 +14,7 @@ import com.example.waste_management_server.repository.VehicleRepo;
 import com.example.waste_management_server.service.GenerateInputFile;
 import com.example.waste_management_server.service.Solver;
 import com.example.waste_management_server.test.IndividualTest;
+
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;

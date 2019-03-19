@@ -1,6 +1,6 @@
 package com.example.waste_management_server.controller;
 
-import com.example.waste_management_server.entity.User;
+import com.example.waste_management_server.entity.AppUser;
 import com.example.waste_management_server.service.UserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -15,27 +15,27 @@ public class UserController {
     @Autowired private UserServiceImpl userService;
 
     @PostMapping("/create")
-    public String createUser(@RequestBody User user)
+    public String createUser(@RequestBody AppUser appUser)
     {
-        return userService.saveUser(user);
+        return userService.saveUser(appUser);
     }
 
     @PostMapping("/login")
-    public boolean verifyUser(@RequestBody User user)
+    public boolean verifyUser(@RequestBody AppUser appUser)
     {
-        return userService.verifyUser(user.getEmail(),user.getPassword());
+        return userService.verifyUser(appUser.getEmail(), appUser.getPassword());
     }
 
     @PostMapping("/validateEmail")
-    public boolean validateEmail(@RequestBody User user)
+    public boolean validateEmail(@RequestBody AppUser appUser)
     {
-        return userService.validateEmail(user);
+        return userService.validateEmail(appUser);
     }
 
     @PostMapping("/verifyPassword")
-    public boolean verifyPassword(@RequestBody User user)
+    public boolean verifyPassword(@RequestBody AppUser appUser)
     {
-        return userService.verifyPassword(user);
+        return userService.verifyPassword(appUser);
     }
 
 }

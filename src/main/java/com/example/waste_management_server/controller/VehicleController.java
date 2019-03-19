@@ -5,10 +5,7 @@ import com.example.waste_management_server.model.VehicleDto;
 import com.example.waste_management_server.repository.VehicleRepo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -24,5 +21,17 @@ public class VehicleController {
     public List<VehicleDto> getRoutes(@RequestParam String date)
     {
         return vehicleConverter.convertEntityToModel(vehicleRepo.findByDate(date));
+    }
+
+    @PostMapping("/add")
+    public String add(@RequestBody VehicleDto vehicleDto)
+    {
+        vehicleRepo.save(vehicleConverter.convertModelToEntity(vehicleDto));
+        return "Success";
+    }
+
+    @GetMapping("/all")
+    public List<VehicleDto> all(){
+        return vehicleConverter.convertEntityToModel(vehicleRepo.findAll());
     }
 }
