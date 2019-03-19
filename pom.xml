@@ -114,14 +114,6 @@
             <scope>runtime</scope>
         </dependency>
 
-        <dependency>
-            <groupId>com.java.cvrpSolver</groupId>
-            <artifactId>jvrp</artifactId>
-            <version>0.0.1</version>
-            <scope>system</scope>
-            <systemPath>F:/Studies/jvrp/jvrp/target/jvrp-0.0.1.jar</systemPath>
-        </dependency>
-
     </dependencies>
 
     <build>
