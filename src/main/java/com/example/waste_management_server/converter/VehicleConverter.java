@@ -32,7 +32,7 @@ public class VehicleConverter {
 
         String path = vehicle.getPathFollowed().substring(1,vehicle.getPathFollowed().length()-1);
         List<Integer> pathTravelled =new ArrayList<>();
-        pathTravelled = Arrays.stream(path.split(",")).map(d_Id -> Integer.parseInt(d_Id)).collect(Collectors.toList());
+        pathTravelled = Arrays.stream(path.split(",")).map(d_Id -> Integer.parseInt(d_Id.trim())).collect(Collectors.toList());
         vehicleDto.setPathFollowed(pathTravelled);
         return vehicleDto;
     }

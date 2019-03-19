@@ -66,7 +66,7 @@ public class DustbinController {
     @GetMapping("/solve")
     public String  solveCvrpProblem(@RequestParam String date, @RequestParam Integer numberOfVehicles,@RequestParam Integer vehicleCapacity) throws IOException {
 
-//        generateInputFile.generate(date,vehicleCapacity);
+       generateInputFile.generate(date,vehicleCapacity);
         int populationSize =10;
         int numberOfRounds = 10;
         ArrayList<Integer[]> routesGenerated = solver.solve();
@@ -136,7 +136,7 @@ public class DustbinController {
             v.setTotalDistanceTravelled(bestIndividual.getRouteDistance(v.getPathFollowed().toArray(new Integer[v.getPathFollowed().size()])));
         }
 
-//        vehicleConverter.convertModelToEntity(vehicleDtos).forEach(v->vehicleRepo.save(v));
+        vehicleConverter.convertModelToEntity(vehicleDtos).forEach(v->vehicleRepo.save(v));
         return "Generated Routes Succesfully";
     }
 
